@@ -1,0 +1,29 @@
+"$schema" = "https://jj-vcs.github.io/jj/latest/config-schema.json"
+
+[aliases]
+check = ["util", "exec", "--", "uvx", "jj-pre-push", "check"]
+closest = ["util", "exec", "--", "sh", "-c", """
+jj log --no-graph -r 'closest_bookmark(@)' -T 'stringify(local_bookmarks.map(|b| b.name()).join("\n")).first_line()++"\n"'
+""", ""]
+fetch = ["git", "fetch"]
+push = ["util", "exec", "--", "uvx", "jj-pre-push", "push"]
+tug = ["bookmark", "move", "--from", "closest_bookmark(@)", "--to", "closest_nonempty(@)"]
+up = ["util", "exec", "--", "sh", "-e", "-c", """
+jj tug
+if [ -d .git ]; then git switch $(jj closest); fi
+""", ""]
+
+[git]
+private-commits = "description(glob:'wip*')"
+push-new-bookmarks = true
+write-change-id-header = true
+
+[revset-aliases]
+'closest_bookmark(to)' = 'heads(::to & bookmarks())'
+'closest_nonempty(to)' = 'heads(::to ~ empty())'
+
+[ui]
+conflict-marker-style = "git"
+default-command = "log"
+diff-formatter = ":git"
+pager = ["delta", "--side-by-side"]
