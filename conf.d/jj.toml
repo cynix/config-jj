@@ -7,9 +7,12 @@ jj log --no-graph -r 'closest_bookmark(@)' -T 'stringify(local_bookmarks.map(|b|
 """, ""]
 fetch = ["git", "fetch"]
 push = ["util", "exec", "--", "uvx", "jj-pre-push", "push"]
-tug = ["bookmark", "move", "--from", "closest_bookmark(@)", "--to", "closest_nonempty(@)"]
-up = ["util", "exec", "--", "sh", "-e", "-c", """
-jj tug
+tug = ["util", "exec", "--", "sh", "-e", "-c", """
+if [ "x$1" = "x" ]; then
+  jj bookmark move --from "closest_bookmark(@)" --to "closest_pushable(@)"
+else
+  jj bookmark move --to "closest_pushable(@)" "$@"
+fi
 if [ -d .git ]; then git switch $(jj closest); fi
 """, ""]
 
@@ -20,7 +23,7 @@ write-change-id-header = true
 
 [revset-aliases]
 'closest_bookmark(to)' = 'heads(::to & bookmarks())'
-'closest_nonempty(to)' = 'heads(::to ~ empty())'
+'closest_pushable(to)' = 'heads(::to & mutable() & ~description(exact:"") & (~empty() | merges()))'
 
 [ui]
 conflict-marker-style = "git"
