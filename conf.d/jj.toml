@@ -2,6 +2,7 @@
 
 [aliases]
 check = ["util", "exec", "--", "uvx", "jj-pre-push", "check"]
+clone = ["git", "clone", "--colocate"]
 closest = ["util", "exec", "--", "sh", "-c", """
 jj log --no-graph -r 'closest_bookmark(@)' -T 'stringify(local_bookmarks.map(|b| b.name()).join("\n")).first_line()++"\n"'
 """, ""]
@@ -13,7 +14,7 @@ if [ "x$1" = "x" ]; then
 else
   jj bookmark move --to "closest_pushable(@)" "$@"
 fi
-if [ -d .git ]; then git switch $(jj closest); fi
+if [ -d .git ]; then git switch "$(jj closest)"; fi
 """, ""]
 
 [experimental-advance-branches]
