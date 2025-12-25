@@ -23,7 +23,6 @@ disabled-branches = ["exact:main", "exact:master"]
 
 [git]
 private-commits = "description(glob:'wip*')"
-push-new-bookmarks = true
 write-change-id-header = true
 
 [revset-aliases]
