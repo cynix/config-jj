@@ -1,13 +1,13 @@
 "$schema" = "https://jj-vcs.github.io/jj/latest/config-schema.json"
 
 [aliases]
-check = ["util", "exec", "--", "uvx", "jj-pre-push", "check"]
+check = ["util", "exec", "--", "jj-pre-push", "--checker=prek", "check"]
 clone = ["git", "clone", "--colocate"]
 closest = ["util", "exec", "--", "sh", "-c", """
 jj log --no-graph -r 'closest_bookmark(@)' -T 'stringify(local_bookmarks.map(|b| b.name()).join("\n")).first_line()++"\n"'
 """, ""]
 fetch = ["git", "fetch"]
-push = ["util", "exec", "--", "uvx", "jj-pre-push", "push"]
+push = ["util", "exec", "--", "jj-pre-push", "--checker=prek", "push"]
 tug = ["util", "exec", "--", "sh", "-e", "-c", """
 if [ "x$1" = "x" ]; then
   jj bookmark move --from "closest_bookmark(@)" --to "closest_pushable(@)"
