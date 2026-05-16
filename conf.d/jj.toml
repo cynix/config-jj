@@ -17,6 +17,13 @@ disabled-branches = ["exact:main", "exact:master"]
 private-commits = "description(glob:'wip*')"
 write-change-id-header = true
 
+[merge-tools.weave]
+program = "weave-driver"
+merge-args = ["$base", "$left", "$right", "-o", "$output", "-l", "$marker_length", "-p", "$path"]
+merge-conflict-exit-codes = [1]
+merge-tool-edits-conflict-markers = true
+conflict-marker-style = "git"
+
 [revset-aliases]
 'closest_bookmark(to)' = 'heads(::to & bookmarks())'
 'closest_pushable(to)' = 'heads(::to & mutable() & ~description(exact:"") & (~empty() | merges()))'
